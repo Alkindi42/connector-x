@@ -20,14 +20,6 @@ pub enum ConnectorXOutError {
     #[error(transparent)]
     JsonError(#[from] serde_json::Error),
 
-    #[cfg(feature = "federation")]
-    #[error(transparent)]
-    J4RSError(#[from] j4rs::errors::J4RsError),
-
-    #[cfg(feature = "fed_exec")]
-    #[error(transparent)]
-    DataFusionError(#[from] datafusion::error::DataFusionError),
-
     #[error(transparent)]
     UrlParseError(#[from] url::ParseError),
 

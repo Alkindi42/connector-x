@@ -1,16 +1,7 @@
 set dotenv-load := true
 
-build-release:
-    cargo build --release --features all
-
 build-debug:
     cargo build --features all
-
-build-cpp +ARGS="":
-    cd connectorx-cpp && cargo build {{ARGS}}
-
-build-cpp-release +ARGS="":
-    cd connectorx-cpp && cargo build --release {{ARGS}}
 
 test +ARGS="": 
     cargo test --features all {{ARGS}} -- --nocapture
@@ -29,10 +20,6 @@ test-feature-gate:
 bootstrap-python:
     cd connectorx-python && poetry install
 
-setup-java:
-    cd federated-query/rewriter && mvn package -Dmaven.test.skip=true
-    cp -f ./federated-query/rewriter/target/federated-rewriter-1.0-SNAPSHOT-jar-with-dependencies.jar connectorx-python/connectorx/dependencies/federated-rewriter.jar
-
 setup-python:
     cd connectorx-python && poetry run maturin develop --release
     
@@ -41,12 +28,6 @@ test-python +opts="": setup-python
 
 test-python-s +opts="":
     cd connectorx-python && poetry run pytest connectorx/tests -v -s {{opts}}
-
-test-fed file="3.sql":
-    cd connectorx && cargo run --features src_postgres --features src_mysql --features dst_arrow --features federation --example federated_test "../federated-query/test-queries/{{file}}"
-
-test-datafusion:
-    cd connectorx && cargo run --features src_postgres --features src_mysql --features dst_arrow --features federation --example test
 
 seed-db:
     #!/bin/bash
@@ -91,7 +72,6 @@ python-ddos name +ARGS="": setup-python
 python-ddos-ext name +ARGS="":
     cd connectorx-python && poetry run python ../benchmarks/ddos-{{name}}.py {{ARGS}}
 
-
 python-shell:
     cd connectorx-python && \
     poetry run ipython
@@ -102,29 +82,4 @@ benchmark-report: setup-python
     
 # releases
 build-python-wheel:
-    # need to get the j4rs dependency first
     cd connectorx-python && maturin build --release -i python
-    # copy files
-    cp -rf connectorx-python/target/release/jassets connectorx-python/connectorx/dependencies
-    # build final wheel
-    cd connectorx-python && maturin build --release -i python
-
-bench-fed path:
-    just python-tpch fed --file {{path}}/q2.sql
-    just python-tpch-ext fed --file {{path}}/q3.sql
-    just python-tpch-ext fed --file {{path}}/q4.sql
-    just python-tpch-ext fed --file {{path}}/q5.sql
-    just python-tpch-ext fed --file {{path}}/q7.sql
-    just python-tpch-ext fed --file {{path}}/q8.sql
-    just python-tpch-ext fed --file {{path}}/q9.sql
-    just python-tpch-ext fed --file {{path}}/q10.sql
-    just python-tpch-ext fed --file {{path}}/q11.sql
-    just python-tpch-ext fed --file {{path}}/q12.sql
-    just python-tpch-ext fed --file {{path}}/q13.sql
-    just python-tpch-ext fed --file {{path}}/q14.sql
-    just python-tpch-ext fed --file {{path}}/q16.sql
-    just python-tpch-ext fed --file {{path}}/q17.sql
-    just python-tpch-ext fed --file {{path}}/q18.sql
-    just python-tpch-ext fed --file {{path}}/q19.sql
-    just python-tpch-ext fed --file {{path}}/q20.sql
-    just python-tpch-ext fed --file {{path}}/q22.sql

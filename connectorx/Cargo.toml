@@ -55,7 +55,6 @@ tokio = {version = "1", features = ["rt", "rt-multi-thread", "net"], optional = 
 tokio-util = {version = "0.6", optional = true}
 urlencoding = {version = "2.1", optional = true}
 uuid = {version = "0.8", optional = true}
-j4rs = {version = "0.15", optional = true}
 datafusion = {version = "31", optional = true}
 
 [lib]
@@ -69,7 +68,7 @@ iai = "0.1"
 pprof = {version = "0.5", features = ["flamegraph"]}
 
 [features]
-all = ["src_sqlite", "src_postgres", "src_mysql", "src_mssql", "src_oracle", "src_bigquery", "src_csv", "src_dummy", "dst_arrow", "dst_arrow2", "federation", "fed_exec"]
+all = ["src_sqlite", "src_postgres", "src_mysql", "src_mssql", "src_oracle", "src_bigquery", "src_csv", "src_dummy", "dst_arrow", "dst_arrow2"]
 branch = []
 default = ["fptr"]
 dst_arrow = ["arrow"]
@@ -97,9 +96,4 @@ src_postgres = [
   "postgres-openssl",
 ]
 src_sqlite = ["rusqlite", "r2d2_sqlite", "fallible-streaming-iterator", "r2d2", "urlencoding"]
-federation = ["j4rs"]
-fed_exec = ["datafusion", "tokio"]
 integrated-auth-gssapi = ["tiberius/integrated-auth-gssapi"]
-
-[package.metadata.docs.rs]
-features = ["all"]

@@ -5,8 +5,6 @@ mod errors;
 pub mod pandas;
 pub mod read_sql;
 
-use crate::constants::J4RS_BASE_PATH;
-use connectorx::fed_dispatcher::run;
 use pyo3::exceptions::PyRuntimeError;
 use pyo3::prelude::*;
 use pyo3::{wrap_pyfunction, PyResult};
@@ -32,7 +30,6 @@ fn connectorx(_: Python, m: &PyModule) -> PyResult<()> {
     });
 
     m.add_wrapped(wrap_pyfunction!(read_sql))?;
-    m.add_wrapped(wrap_pyfunction!(read_sql2))?;
     m.add_wrapped(wrap_pyfunction!(partition_sql))?;
     m.add_wrapped(wrap_pyfunction!(get_meta))?;
     m.add_class::<pandas::PandasBlockInfo>()?;
@@ -61,27 +58,6 @@ pub fn partition_sql(
     let queries = connectorx::partition::partition(&partition_query.into(), &source_conn)
         .map_err(|e| crate::errors::ConnectorXPythonError::from(e))?;
     Ok(queries.into_iter().map(|q| q.to_string()).collect())
-}
-
-#[pyfunction]
-pub fn read_sql2<'a>(
-    py: Python<'a>,
-    sql: &str,
-    db_map: HashMap<String, String>,
-) -> PyResult<&'a PyAny> {
-    let rbs = run(
-        sql.to_string(),
-        db_map,
-        Some(
-            env::var("J4RS_BASE_PATH")
-                .unwrap_or(J4RS_BASE_PATH.to_string())
-                .as_str(),
-        ),
-    )
-    .map_err(|e| PyRuntimeError::new_err(format!("{}", e)))?;
-    let ptrs = arrow::to_ptrs(rbs);
-    let obj: PyObject = ptrs.into_py(py);
-    Ok(obj.into_ref(py))
 }
 
 #[pyfunction]

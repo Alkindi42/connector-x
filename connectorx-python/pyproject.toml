@@ -60,13 +60,6 @@ twine = "^3.4.1"
 [tool.pytest.ini_options]
 minversion = "6.0"
 python_functions = "test_* bench_*"
-# python_files = check_*.py
-# python_classes = Check
-# addopts = "-ra -q"
-# testpaths = [
-#   "tests",
-#   "integration",
-# ]
 
 [build-system]
 build-backend = "maturin"
@@ -76,6 +69,5 @@ requires = ["maturin>=1.0,<2.0"]
 include = [
     { path = "connectorx/*.so", format = "sdist"},
     { path = "connectorx/*.pyd", format = "sdist"},
-    { path = "connectorx/dependencies/", format = "sdist"},
     { path = "LICENSE", format = "sdist"},
 ]
